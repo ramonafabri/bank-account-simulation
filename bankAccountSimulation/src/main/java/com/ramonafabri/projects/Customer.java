@@ -11,13 +11,14 @@ public class Customer {
 
     private List<BankAccount> bankAccounts = new ArrayList<>();
 
-    public Customer(String name, List<BankAccount> bankAccounts) {
-        this.name = name;
-        this.bankAccounts = bankAccounts;
-    }
 
     public Customer(String name){
         this.name = name;
+        this.bankAccounts = new ArrayList<>();
+    }
+
+    public void addAccount(BankAccount bankAccount){
+        bankAccounts.add(bankAccount);
     }
 
     public String getName() {
@@ -35,4 +36,6 @@ public class Customer {
     private void setBankAccounts(List<BankAccount> bankAccounts) {
         this.bankAccounts = bankAccounts;
     }
+
+
 }

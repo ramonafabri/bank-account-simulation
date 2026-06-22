@@ -1,8 +1,7 @@
 package com.ramonafabri.projects;
 
-import com.ramonafabri.projects.account.BankAccount;
-import com.ramonafabri.projects.account.CheckingAccount;
-import com.ramonafabri.projects.account.SavingsAccount;
+import com.ramonafabri.projects.service.BankService;
+import com.ramonafabri.projects.transaction.Transaction;
 import com.ramonafabri.projects.ui.UI;
 
 import java.util.ArrayList;
@@ -11,66 +10,93 @@ import java.util.List;
 public class BankAccountSimulationEngine {
 
     private final UI ui;
-    private List<Customer> customers = new ArrayList<>();
-    private List<BankAccount> accounts = new ArrayList<>();
+    private final BankService bankService;
 
 
     public BankAccountSimulationEngine(UI ui) {
         this.ui = ui;
+        this.bankService = new BankService();
     }
 
     public void run() {
         boolean isRunning = true;
+
         while (isRunning) {
             String input = ui.getCommand();
-            String[] commands = input.split(" \\| ");
+            String[] commands = input.split("\\|");
+            String command = commands[0].trim();
 
             List<String> params = new ArrayList<>();
-            if (commands.length > 1) {
-                params = List.of(commands[1].split(" "));
+            if (commands.length == 2) {
+                params = List.of(commands[1].trim().split("\\s+"));
+            } else if (commands.length > 2) {
+                for (int i = 1; i < commands.length; i++) {
+                    params.add(commands[i].trim());
+                }
             }
 
-            switch (commands[0]) {
-
-                case "registerCustomer", "rc" -> registerCustomer(params.get(0));
-                case "registerBankAccount", "ra" -> {
-                    int accountNumber = Integer.parseInt(params.get(0));
-                    String type = params.get(1).toLowerCase();
-
-                    BankAccount account;
-
-                    switch (type) {
-                        case "standard" -> account = new BankAccount(accountNumber);
-                        case "checking" -> {
-                            int overdraftLimit = Integer.parseInt(params.get(2));
-                            account = new CheckingAccount(accountNumber, overdraftLimit);
-                        }
-                        case "savings" -> {
-                            int interest = Integer.parseInt(params.get(2));
-                            account = new SavingsAccount(accountNumber, interest);
-                        }
-                        default -> throw new IllegalArgumentException("Unknown account type: " + type);
-                    }
-
-                    accounts.add(account);
+            switch (command) {
+                case "registerCustomer", "rc" -> {
+                    bankService.registerCustomer(params.get(0));
+                    ui.printMessage("Customer registered successfully.");
                 }
 
-                case "quit", "q" -> isRunning = false;
+                case "openAccount", "oa" -> {
 
+                    String owner = String.valueOf(params.get(0));
+                    int accountNumber = Integer.parseInt(params.get(1));
+
+                    String accountType = String.valueOf(params.get(2));
+
+                    Double extraValue = null;
+                    if (params.size() > 3) {
+                        extraValue = Double.parseDouble(params.get(3));
+                    }
+
+                    bankService.openAccount(owner,accountNumber,accountType, extraValue);
+                    ui.printMessage("Account registered successfully.");
+                }
+
+                case "deposit", "d" ->{
+
+                    int accountNumber = Integer.parseInt(params.get(0));
+                    double amount = Double.parseDouble(params.get(1));
+
+                    bankService.depositMoney(accountNumber,amount);
+                    ui.printMessage("Deposit added successfully: " + amount + " on account number: " + accountNumber);
+                }
+
+                case "withdraw", "w" -> {
+                    int accountNumber = Integer.parseInt(params.get(0));
+                    double amount = Double.parseDouble(params.get(1));
+
+                    bankService.withdrawMoney(accountNumber,amount);
+                    ui.printMessage("Withdraw was successful: " + amount + " from account number: " + accountNumber);
+                }
+
+                case "transfer", "t" -> {
+                    int sourceAccountNumber = Integer.parseInt(params.get(0));
+                    int targetAccountNumber = Integer.parseInt(params.get(1));
+                    double amount = Double.parseDouble(params.get(2));
+
+                    bankService.transferMoney(sourceAccountNumber,targetAccountNumber,amount);
+                    ui.printMessage("Transfer was successful. You have transferred " + amount + " from account number: " + sourceAccountNumber + " to account number: " + targetAccountNumber);
+                }
+
+                case "history", "h" ->{
+                    int accountNumber = Integer.parseInt(params.get(0));
+                    List<Transaction> transactions = bankService.getTransactionHistory(accountNumber);
+                    for (Transaction transaction : transactions) {
+                        ui.printMessage(transaction.toString());
+                    }
+
+                }
+                case "quit", "q" -> isRunning = false;
             }
 
-
         }
+
         ui.close();
     }
-
-
-    private void registerCustomer(String name){
-        Customer customer = new Customer(name);
-        customers.add(customer);
-    }
-
-
-
-
 }
+

@@ -7,16 +7,16 @@ import java.util.List;
 
 public class SavingsAccount extends BankAccount {
 
-    private Integer interest;
+    private Double interest;
 
 
-    public SavingsAccount(Customer owner, Integer accountNumber, List<Transaction> transactions, Double balance, Integer interest) {
+    public SavingsAccount(Customer owner, Integer accountNumber, List<Transaction> transactions, Double balance, Double interest) {
         super(owner, accountNumber, transactions, balance);
         this.interest = interest;
     }
 
-    public SavingsAccount(Integer accountNumber, Integer interest) {
-        super(accountNumber);
+    public SavingsAccount(Customer owner,Integer accountNumber, Double interest) {
+        super(owner,accountNumber);
         this.interest = interest;
     }
 
@@ -24,11 +24,11 @@ public class SavingsAccount extends BankAccount {
 
     private void checkLimit(){}
 
-    public Integer getInterest() {
+    public Double getInterest() {
         return interest;
     }
 
-    public void setInterest(Integer interest) {
+    public void setInterest(Double interest) {
         this.interest = interest;
     }
 

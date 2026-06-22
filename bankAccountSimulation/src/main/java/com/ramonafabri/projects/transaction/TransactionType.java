@@ -6,7 +6,6 @@ public enum TransactionType {
     WITHDRAWAL,
     TRANSFER_IN,
     TRANSFER_OUT,
-    ACCOUNT_OPENING,
     FEE,
     INTEREST
 }

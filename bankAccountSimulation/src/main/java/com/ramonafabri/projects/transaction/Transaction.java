@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class Transaction {
 
+    private static long nextId = 1;
+
     private Long id;
 
     private TransactionType transactionType;
@@ -20,16 +22,18 @@ public class Transaction {
 
     private Double balanceAfterTransaction;
 
-    public Transaction(Long id, TransactionType transactionType, Double amount, Integer sourceAccountNumber, Integer targetAccountNumber, LocalDateTime dateTime, String description, Double balanceAfterTransaction) {
-        this.id = id;
+    public Transaction(TransactionType transactionType, Double amount, Integer sourceAccountNumber, Integer targetAccountNumber, String description, Double balanceAfterTransaction) {
+        this.id = nextId;
+        nextId++;
         this.transactionType = transactionType;
         this.amount = amount;
+        this.dateTime = LocalDateTime.now();
         this.sourceAccountNumber = sourceAccountNumber;
         this.targetAccountNumber = targetAccountNumber;
-        this.dateTime = dateTime;
         this.description = description;
         this.balanceAfterTransaction = balanceAfterTransaction;
     }
+
 
     public Long getId() {
         return id;
@@ -93,5 +97,19 @@ public class Transaction {
 
     public void setBalanceAfterTransaction(Double balanceAfterTransaction) {
         this.balanceAfterTransaction = balanceAfterTransaction;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", type=" + transactionType +
+                ", amount=" + amount +
+                ", dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", sourceAccountNumber=" + sourceAccountNumber +
+                ", targetAccountNumber=" + targetAccountNumber +
+                ", balanceAfterTransaction=" + balanceAfterTransaction +
+                '}';
     }
 }

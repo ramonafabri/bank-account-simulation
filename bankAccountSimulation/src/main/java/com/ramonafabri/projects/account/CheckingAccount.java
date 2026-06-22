@@ -7,24 +7,32 @@ import java.util.List;
 
 public class CheckingAccount extends BankAccount {
 
-    private Integer overdraftLimit;
+    private Double overdraftLimit;
 
-    public CheckingAccount(Customer owner, Integer accountNumber, List<Transaction> transactions, Double balance, Integer overdraftLimit) {
+    public CheckingAccount(Customer owner, Integer accountNumber, List<Transaction> transactions, Double balance, Double overdraftLimit) {
         super(owner, accountNumber, transactions, balance);
         this.overdraftLimit = overdraftLimit;
     }
 
-    public Integer getOverdraftLimit() {
+    public Double getOverdraftLimit() {
         return overdraftLimit;
     }
 
-    public void setOverdraftLimit(Integer overdraftLimit) {
+    public void setOverdraftLimit(Double overdraftLimit) {
         this.overdraftLimit = overdraftLimit;
     }
 
-    public CheckingAccount(Integer accountNumber, Integer overdraftLimit) {
-        super(accountNumber);
+    public CheckingAccount(Customer owner,Integer accountNumber, Double overdraftLimit) {
+        super(owner,accountNumber);
         this.overdraftLimit = overdraftLimit;
     }
 
+
+    @Override
+    public boolean canWithdraw(double amount) {
+        if(amount <= getBalance() + getOverdraftLimit()){
+            return true;
+        }
+        return false;
+    }
 }
